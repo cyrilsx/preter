@@ -1,55 +1,48 @@
 package ch.collen.preterbackendserver.web;
 
 import ch.collen.preterbackendserver.db.PersonRepository;
+import ch.collen.preterbackendserver.db.document.Person;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.times;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@WebFluxTest(PersonResource.class)
 class PersonResourceIT {
-
-    @LocalServerPort
-    private int port;
+    @MockBean
+    PersonRepository repository;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private WebTestClient webClient;
 
-    @Container
-    public MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:latest"));
+    public static final Person PERSON = Person.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
 
-//    @Autowired
-//    private PersonResource personResource;
+    @BeforeEach
+    void setUpData() {
+        BDDMockito.given(repository.findAllByShortUrl(ArgumentMatchers.anyString())).willReturn(Mono.just(PERSON));
+    }
 
     @Test
-    void testFindByEmail() {
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/person/cyril",
-                String.class)).contains("Hello, World");
+    void testFindByShortUrl() {
+        webClient.get()
+                .uri("/api/person/cyril")
+                .header("Authorization", AuthenticationHelper.basicTestAuth())
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Person.class)
+                .isEqualTo(PERSON);
 
-//        webTestClient.get().uri("api/person/cyril")
-//                .accept(MediaType.APPLICATION_JSON)
-//                .exchange()
-//                .expectStatus().isOk();
-//        mockMvc.perform(get("api/person")).andDo(print()).andExpect(status().isOk());
-//        Mono<Person> result = personResource.findByEmail("cyril@collen.ch");
-//        Assertions.assertThat(result.toFuture().get()).isNull();
+        Mockito.verify(repository, times(1)).findAllByShortUrl("cyril");
+
     }
 }

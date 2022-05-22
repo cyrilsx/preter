@@ -116,7 +116,7 @@
                     </image>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--plugin> NB: To fix when release and stable
                 <groupId>org.springframework.experimental</groupId>
                 <artifactId>spring-aot-maven-plugin</artifactId>
                 <version>${spring-native.version}</version>
@@ -134,7 +134,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
         </plugins>
     </build>
     <repositories>

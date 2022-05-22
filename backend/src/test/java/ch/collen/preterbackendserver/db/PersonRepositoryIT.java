@@ -35,13 +35,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ContextConfiguration(classes = PreterBackendServerApplication.class, initializers = PersonRepositoryIT.Initializer.class)
+@ContextConfiguration(classes = PreterBackendServerApplication.class/*, initializers = PersonRepositoryIT.Initializer.class*/)
 class PersonRepositoryIT {
 
     public static final Person PERSON = Person.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:latest"));
 
+    @DynamicPropertySource
+    static void registerPgProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri",
+                () -> mongoDBContainer.getReplicaSetUrl());
+    }
+    /*
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
@@ -49,7 +55,7 @@ class PersonRepositoryIT {
                     String.format("spring.data.mongodb.uri: %s", mongoDBContainer.getReplicaSetUrl())
             ).applyTo(configurableApplicationContext);
         }
-    }
+    }*/
 
     @Autowired
     private PersonRepository personRepository;
@@ -73,5 +79,10 @@ class PersonRepositoryIT {
     @Test
     void size() {
         assertThat(personRepository.count().block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(1L);
+    }
+
+    @Test
+    void findAllByShortUrl_found() {
+        assertThat(personRepository.findAllByShortUrl(PERSON.getShortUrl()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(PERSON);
     }
 }
