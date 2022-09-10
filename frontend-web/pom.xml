@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ch.collen</groupId>
+        <artifactId>preter-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>preter-frontend</artifactId>
+    <name>preter-frontend</name>
+    <description>preter-frontend-client</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.wcm.maven.plugins</groupId>
+                <artifactId>nodejs-maven-plugin</artifactId>
+                <version>3.0.6</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nodeJsVersion>12.16.1</nodeJsVersion>
+                    <tasks>
+                        <npmInstallTask>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                        </npmInstallTask>
+                        <nodeJsTask>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+                            <moduleName>npm</moduleName>
+                            <executableName>npm-cli</executableName>
+                            <arguments>
+                                <argument>build</argument>
+                            </arguments>
+                        </nodeJsTask>
+                    </tasks>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+</project>

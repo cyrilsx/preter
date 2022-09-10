@@ -1,4 +1,4 @@
-# frontend-web
+# jmx_ui
 
 ## Project setup
 ```
