@@ -1,12 +1,11 @@
 package ch.collen.preterbackendserver.web;
 
-import ch.collen.preterbackendserver.db.PersonRepository;
-import ch.collen.preterbackendserver.db.document.Person;
+import ch.collen.preterbackendserver.infrastucture.db.UserRepository;
+import ch.collen.preterbackendserver.infrastucture.db.document.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,21 +14,22 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @Testcontainers
-@WebFluxTest(PersonResource.class)
-class PersonResourceIT {
+@WebFluxTest(UserResource.class)
+class UserResourceIT {
     @MockBean
-    PersonRepository repository;
+    UserRepository repository;
 
     @Autowired
     private WebTestClient webClient;
 
-    public static final Person PERSON = Person.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
+    public static final User USER = User.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
 
     @BeforeEach
     void setUpData() {
-        BDDMockito.given(repository.findAllByShortUrl(ArgumentMatchers.anyString())).willReturn(Mono.just(PERSON));
+        BDDMockito.given(repository.findAllByShortUrl(ArgumentMatchers.anyString())).willReturn(Mono.just(USER));
     }
 
     @Test
@@ -39,10 +39,10 @@ class PersonResourceIT {
                 .header("Authorization", AuthenticationHelper.basicTestAuth())
                 .exchange()
                 .expectStatus().is2xxSuccessful()
-                .expectBody(Person.class)
-                .isEqualTo(PERSON);
+                .expectBody(User.class)
+                .isEqualTo(USER);
 
-        Mockito.verify(repository, times(1)).findAllByShortUrl("cyril");
+        verify(repository, times(1)).findAllByShortUrl("cyril");
 
     }
 }

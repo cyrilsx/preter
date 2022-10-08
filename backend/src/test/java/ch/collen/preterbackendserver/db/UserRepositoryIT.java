@@ -1,23 +1,12 @@
 package ch.collen.preterbackendserver.db;
 
 import ch.collen.preterbackendserver.PreterBackendServerApplication;
-import ch.collen.preterbackendserver.db.document.Person;
-import ch.collen.preterbackendserver.web.PersonResource;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoClients;
-import org.assertj.core.api.Assertions;
+import ch.collen.preterbackendserver.infrastucture.db.UserRepository;
+import ch.collen.preterbackendserver.infrastucture.db.document.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -25,20 +14,18 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ContextConfiguration(classes = PreterBackendServerApplication.class/*, initializers = PersonRepositoryIT.Initializer.class*/)
-class PersonRepositoryIT {
+class UserRepositoryIT {
 
-    public static final Person PERSON = Person.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
+    public static final User USER = User.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:latest"));
 
@@ -58,31 +45,31 @@ class PersonRepositoryIT {
     }*/
 
     @Autowired
-    private PersonRepository personRepository;
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
-        personRepository.deleteAll();
-        personRepository.save(PERSON).block();
+        userRepository.deleteAll();
+        userRepository.save(USER).block();
     }
 
     @Test
     void findAllByEmail_none() {
-        assertThat(personRepository.findAllByEmail("unknown@test.ch").block(Duration.of(5, ChronoUnit.SECONDS))).isNull();
+        assertThat(userRepository.findAllByEmail("unknown@test.ch").block(Duration.of(5, ChronoUnit.SECONDS))).isNull();
     }
 
     @Test
     void findAllByEmail_found() {
-        assertThat(personRepository.findAllByEmail(PERSON.getEmail()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(PERSON);
+        assertThat(userRepository.findAllByEmail(USER.getEmail()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(USER);
     }
 
     @Test
     void size() {
-        assertThat(personRepository.count().block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(1L);
+        assertThat(userRepository.count().block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(1L);
     }
 
     @Test
     void findAllByShortUrl_found() {
-        assertThat(personRepository.findAllByShortUrl(PERSON.getShortUrl()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(PERSON);
+        assertThat(userRepository.findAllByShortUrl(USER.getShortUrl()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(USER);
     }
 }

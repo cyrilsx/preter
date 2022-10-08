@@ -1,18 +1,17 @@
-package ch.collen.preterbackendserver.db.document;
+package ch.collen.preterbackendserver.web.dto;
 
+import ch.collen.preterbackendserver.infrastucture.db.document.Category;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document("articles")
 @Data
 @Builder
 @Jacksonized
-public class Article {
+public class ItemDto {
     @Id
     private Long id;
     private String name;
@@ -22,5 +21,6 @@ public class Article {
     private Category category;
     private List<String> imageUrl;
     private String owner;
+
 
 }

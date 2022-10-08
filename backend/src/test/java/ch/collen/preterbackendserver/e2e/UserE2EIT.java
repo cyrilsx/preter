@@ -1,7 +1,8 @@
 package ch.collen.preterbackendserver.e2e;
 
-import ch.collen.preterbackendserver.db.PersonRepository;
-import ch.collen.preterbackendserver.db.document.Person;
+import ch.collen.preterbackendserver.infrastucture.db.UserRepository;
+import ch.collen.preterbackendserver.infrastucture.db.document.User;
+import ch.collen.preterbackendserver.web.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Disabled
-class PersonE2EIT {
+class UserE2EIT {
 
     @LocalServerPort
     private int port;
@@ -32,12 +33,12 @@ class PersonE2EIT {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private PersonRepository personRepository;
+    private UserRepository userRepository;
 
-    public static final Person PERSON = Person.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
+    public static final User USER = User.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
 
     @Container
-    static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:latest"));
+    static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
@@ -47,19 +48,19 @@ class PersonE2EIT {
 
     @BeforeEach
     void setUpData() {
-        personRepository.deleteAll().block();
-        personRepository.save(PERSON).block();
+        userRepository.deleteAll().block();
+        userRepository.save(USER).block();
     }
 
     @Test
     void testFindByShortUrl() {
-        ResponseEntity<Person> responseEntity = this.restTemplate
+        ResponseEntity<UserDto> responseEntity = this.restTemplate
                 .withBasicAuth("test", "password")
-                .exchange("http://localhost:" + port + "/api/person/cyril",
+                .exchange("http://localhost:" + port + "/api/users/" + USER.getShortUrl(),
                         HttpMethod.GET,
                         null,
-                        Person.class);
+                        UserDto.class);
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
-        assertThat(responseEntity.getBody()).isEqualTo(PERSON);
+        assertThat(responseEntity.getBody()).isEqualTo(USER);
     }
 }

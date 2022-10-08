@@ -7,7 +7,6 @@
         <artifactId>preter-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>ch.collen</groupId>
 
     <artifactId>preter-backend-server</artifactId>
     <name>preter-backend-server</name>
@@ -81,6 +80,11 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.0</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

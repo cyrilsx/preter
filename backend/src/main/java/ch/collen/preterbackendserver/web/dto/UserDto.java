@@ -1,18 +1,14 @@
-package ch.collen.preterbackendserver.db.document;
+package ch.collen.preterbackendserver.web.dto;
+
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("persons")
 @Data
 @Builder
 @Jacksonized
-public class Person {
-
-    @Id
+public class UserDto {
     private Long id;
     private String email;
 
