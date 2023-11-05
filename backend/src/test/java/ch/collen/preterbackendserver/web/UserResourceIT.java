@@ -1,7 +1,7 @@
 package ch.collen.preterbackendserver.web;
 
-import ch.collen.preterbackendserver.infrastucture.db.UserRepository;
-import ch.collen.preterbackendserver.infrastucture.db.document.User;
+import ch.collen.preterbackendserver.db.UserRepository;
+import ch.collen.preterbackendserver.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -13,10 +13,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Testcontainers
+//@Testcontainers
 @WebFluxTest(UserResource.class)
 class UserResourceIT {
     @MockBean
@@ -25,7 +27,7 @@ class UserResourceIT {
     @Autowired
     private WebTestClient webClient;
 
-    public static final User USER = User.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
+    private static final User USER = new User("1", "user", "", "cyril@tets.ch", "cycy", Collections.emptySet());
 
     @BeforeEach
     void setUpData() {

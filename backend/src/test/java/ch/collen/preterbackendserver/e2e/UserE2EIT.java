@@ -1,7 +1,8 @@
 package ch.collen.preterbackendserver.e2e;
 
-import ch.collen.preterbackendserver.infrastucture.db.UserRepository;
-import ch.collen.preterbackendserver.infrastucture.db.document.User;
+import ch.collen.preterbackendserver.db.UserRepository;
+import ch.collen.preterbackendserver.model.User;
+import ch.collen.preterbackendserver.web.UserResource;
 import ch.collen.preterbackendserver.web.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -9,8 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -18,6 +20,8 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -35,7 +39,7 @@ class UserE2EIT {
     @Autowired
     private UserRepository userRepository;
 
-    public static final User USER = User.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
+    private static final User USER = new User("1", "user", "password", "cyril@tets.ch", "cycy", Collections.emptySet());
 
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
@@ -55,12 +59,12 @@ class UserE2EIT {
     @Test
     void testFindByShortUrl() {
         ResponseEntity<UserDto> responseEntity = this.restTemplate
-                .withBasicAuth("test", "password")
-                .exchange("http://localhost:" + port + "/api/users/" + USER.getShortUrl(),
+                .withBasicAuth("cyril@tets.ch", "password")
+                .exchange("http://localhost:" + port + "/api/users/" + USER.shortUrl(),
                         HttpMethod.GET,
                         null,
                         UserDto.class);
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
-        assertThat(responseEntity.getBody()).isEqualTo(USER);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isEqualTo(UserResource.map(USER));
     }
 }

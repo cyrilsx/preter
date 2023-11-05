@@ -2,3 +2,5 @@ spring:
   data:
     mongodb:
       uri: mongodb://api_user:api1234@localhost:27017/preter_dev_db
+  main:
+    allow-bean-definition-overriding: true

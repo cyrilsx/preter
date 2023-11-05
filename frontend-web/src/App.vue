@@ -1,5 +1,5 @@
 <template>
-  <va-navbar color="blue" class="mb-2">
+  <va-navbar class="mb-2" color="#8FA6CB">
     <template #left>
       <va-navbar-item><router-link to="/"><font-awesome-icon icon="fa-home" /></router-link></va-navbar-item>
       <va-navbar-item><router-link to="/article"><font-awesome-icon icon="fa-shop" /></router-link></va-navbar-item>
@@ -9,9 +9,9 @@
       <va-navbar-item><span class="motive-text">Let's steal (and notify) stuff (and give back)!</span></va-navbar-item>
     </template>
     <template #right>
-      <va-navbar-item class="middle">
+      <va-navbar-item class="right">
         <va-input
-          class="mb-4"
+          class="col-last"
           v-model="value"
           placeholder="Search"
         />
@@ -28,26 +28,29 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+
+  .va-navbar {
+    padding: 0 0 0 10px;
+    //height: fit-content;
+  }
 }
 
 nav {
-  padding: 30px;
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #D5F9DE;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #8AA399;
     }
   }
-  .middle {
-    padding-top: 20px;
+  .right {
+    padding-top: 10px;
   }
 
   .motive-text {
     font-family: Cousine;
-    padding-left: 10px;
   }
 }
 </style>

@@ -1,11 +1,12 @@
-package ch.collen.preterbackendserver.web.dto;
+package ch.collen.preterbackendserver.db.document;
 
-import ch.collen.preterbackendserver.db.document.Category;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-public class ItemDto {
+@Document("items")
+public class Item {
     @Id
     private String id;
     private String name;
@@ -15,6 +16,9 @@ public class ItemDto {
     private Category category;
     private List<String> imageUrl;
     private String owner;
+
+    public Item() {
+    }
 
     public String getId() {
         return id;
@@ -74,8 +78,8 @@ public class ItemDto {
 
     @Override
     public String toString() {
-        return "ItemDto{" +
-                "id='" + id + '\'' +
+        return "Item{" +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", shortUrl='" + shortUrl + '\'' +

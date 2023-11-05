@@ -1,13 +1,11 @@
 package ch.collen.preterbackendserver.db;
 
 import ch.collen.preterbackendserver.PreterBackendServerApplication;
-import ch.collen.preterbackendserver.infrastucture.db.UserRepository;
-import ch.collen.preterbackendserver.infrastucture.db.document.User;
+import ch.collen.preterbackendserver.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
@@ -17,15 +15,15 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ContextConfiguration(classes = PreterBackendServerApplication.class/*, initializers = PersonRepositoryIT.Initializer.class*/)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = PreterBackendServerApplication.class)
 class UserRepositoryIT {
 
-    public static final User USER = User.builder().id(1L).email("cyril@tets.ch").username("user").shortUrl("cycy").build();
+    private static final User USER = new User("1", "user", "", "cyril@tets.ch", "cycy", Collections.emptySet());
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:latest"));
 
@@ -34,15 +32,6 @@ class UserRepositoryIT {
         registry.add("spring.data.mongodb.uri",
                 () -> mongoDBContainer.getReplicaSetUrl());
     }
-    /*
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        @Override
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                    String.format("spring.data.mongodb.uri: %s", mongoDBContainer.getReplicaSetUrl())
-            ).applyTo(configurableApplicationContext);
-        }
-    }*/
 
     @Autowired
     private UserRepository userRepository;
@@ -60,7 +49,7 @@ class UserRepositoryIT {
 
     @Test
     void findAllByEmail_found() {
-        assertThat(userRepository.findAllByEmail(USER.getEmail()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(USER);
+        assertThat(userRepository.findAllByEmail(USER.email()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(USER);
     }
 
     @Test
@@ -70,6 +59,6 @@ class UserRepositoryIT {
 
     @Test
     void findAllByShortUrl_found() {
-        assertThat(userRepository.findAllByShortUrl(USER.getShortUrl()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(USER);
+        assertThat(userRepository.findAllByShortUrl(USER.shortUrl()).block(Duration.of(5, ChronoUnit.SECONDS))).isEqualTo(USER);
     }
 }
