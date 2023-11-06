@@ -10,7 +10,6 @@ public class Item {
     @Id
     private String id;
     private String name;
-
     private String description;
     private String shortUrl;
     private Category category;

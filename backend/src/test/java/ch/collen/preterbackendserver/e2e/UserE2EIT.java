@@ -1,5 +1,6 @@
 package ch.collen.preterbackendserver.e2e;
 
+import ch.collen.preterbackendserver.config.JWTUtil;
 import ch.collen.preterbackendserver.db.UserRepository;
 import ch.collen.preterbackendserver.model.User;
 import ch.collen.preterbackendserver.web.UserResource;
@@ -11,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
@@ -39,10 +38,14 @@ class UserE2EIT {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
     private static final User USER = new User("1", "user", "password", "cyril@tets.ch", "cycy", Collections.emptySet());
 
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
+    private String token;
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
@@ -54,15 +57,17 @@ class UserE2EIT {
     void setUpData() {
         userRepository.deleteAll().block();
         userRepository.save(USER).block();
+        token = jwtUtil.generateToken(USER);
     }
 
     @Test
     void testFindByShortUrl() {
-        ResponseEntity<UserDto> responseEntity = this.restTemplate
-                .withBasicAuth("cyril@tets.ch", "password")
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(token);
+        ResponseEntity<UserDto> responseEntity = restTemplate
                 .exchange("http://localhost:" + port + "/api/users/" + USER.shortUrl(),
                         HttpMethod.GET,
-                        null,
+                        new HttpEntity<>(httpHeaders),
                         UserDto.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(UserResource.map(USER));

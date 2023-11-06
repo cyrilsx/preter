@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 @SpringBootApplication
-@EnableReactiveMongoRepositories(basePackages = "ch.collen.preterbackendserver.db")
 @Import(SecurityConfig.class)
 public class PreterBackendServerApplication {
 

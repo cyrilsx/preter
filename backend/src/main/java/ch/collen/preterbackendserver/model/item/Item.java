@@ -1,22 +1,18 @@
 package ch.collen.preterbackendserver.model.item;
 
+import ch.collen.preterbackendserver.db.document.Category;
 import ch.collen.preterbackendserver.model.User;
 import ch.collen.preterbackendserver.model.community.Community;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
-public class Item {
+public record Item(User owner,
+                   String name,
+                   String description,
+                   String shortUrl,
+                   Category category,
+                   List<String> imageUrls,
+                   Collection<Community> communities) {
 
-    private final User owner;
-    private final Collection<Community> community;
-
-    public Item(User owner, Collection<Community> community) {
-        this.owner = owner;
-        this.community = community;
-    }
-
-    public Collection<Community> communities() {
-        return Collections.unmodifiableCollection(community);
-    }
 }

@@ -3,24 +3,23 @@ package ch.collen.preterbackendserver.config;
 import ch.collen.preterbackendserver.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
-import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JWTUtil {
-    private final String secret;
-    private final String expirationTime;
+    private final SecretKey secret;
+    private final long expirationTime;
 
-    public JWTUtil(String secret, String expirationTime) {
-        this.secret = secret;
+    public JWTUtil(String secret, long expirationTime) {
+        this.secret = Jwts.SIG.HS512.key().build();
         this.expirationTime = expirationTime;
     }
 
     public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(this.secret.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
+        return Jwts.parser().verifyWith(this.secret).build().parseSignedClaims(token).getPayload();
     }
 
     public String getUsernameFromToken(String token) {
@@ -43,16 +42,15 @@ public class JWTUtil {
     }
 
     private String doGenerateToken(Map<String, Object> claims, String username) {
-        Long expirationTimeLong = Long.parseLong(expirationTime); //in second
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong * 1000);
+        final Date expirationDate = new Date(createdDate.getTime() + expirationTime * 1000);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(createdDate)
-                .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, secret.getBytes(StandardCharsets.UTF_8))
+                .claims(claims)
+                .subject(username)
+                .issuedAt(createdDate)
+                .expiration(expirationDate)
+                .signWith(this.secret)
                 .compact();
     }
 

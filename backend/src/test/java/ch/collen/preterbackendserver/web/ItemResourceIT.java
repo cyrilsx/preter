@@ -1,8 +1,8 @@
 package ch.collen.preterbackendserver.web;
 
-import ch.collen.preterbackendserver.db.UserRepository;
-import ch.collen.preterbackendserver.model.User;
-import ch.collen.preterbackendserver.web.dto.UserDto;
+import ch.collen.preterbackendserver.db.ItemRepository;
+import ch.collen.preterbackendserver.db.document.Item;
+import ch.collen.preterbackendserver.web.dto.ItemDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -11,30 +11,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
-import java.util.Collections;
-
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@WebFluxTest(UserResource.class)
-class UserResourceIT {
+@WebFluxTest(ItemResource.class)
+class ItemResourceIT {
     @MockBean
-    UserRepository repository;
+    ItemRepository repository;
 
-    @MockBean
-    ItemResource itemResource;
 
     @Autowired
     private WebTestClient webClient;
 
-    private static final User USER = new User("1", "user", "", "cyril@tets.ch", "cycy", Collections.emptySet());
 
     @BeforeEach
     void setUpData() {
-        BDDMockito.given(repository.findAllByShortUrl(ArgumentMatchers.anyString())).willReturn(Mono.just(USER));
+        BDDMockito.given(repository.findArticleByOwner(ArgumentMatchers.anyString(), any())).willReturn(Flux.just(new Item()));
     }
 
     @Test
@@ -43,10 +38,10 @@ class UserResourceIT {
                 .uri("/api/users/cyril")
                 .exchange()
                 .expectStatus().is2xxSuccessful()
-                .expectBody(UserDto.class)
-                .isEqualTo(UserResource.map(USER));
+                .expectBody(ItemDto.class)
+                .isEqualTo(null);
 
-        verify(repository, times(1)).findAllByShortUrl("cyril");
+        verify(repository, times(1)).findArticleByOwner("cyril", null);
 
     }
 }
