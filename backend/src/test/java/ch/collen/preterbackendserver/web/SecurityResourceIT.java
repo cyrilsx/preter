@@ -19,6 +19,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 
+import static ch.collen.preterbackendserver.db.mapper.UserMapper.fromDocument;
+import static ch.collen.preterbackendserver.db.mapper.UserMapper.fromDomain;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -40,7 +42,7 @@ class SecurityResourceIT {
 
     @BeforeEach
     void setUpData() {
-        BDDMockito.given(repository.findAllByEmail(ArgumentMatchers.anyString())).willReturn(Mono.just(USER));
+        BDDMockito.given(repository.findAllByEmail(ArgumentMatchers.anyString())).willReturn(Mono.just(fromDomain(USER)));
         BDDMockito.given(pbkdf2PasswordEncoder.encode(ArgumentMatchers.anyString())).willReturn(USER.password());
         BDDMockito.given(jwtUtil.generateToken(USER)).willReturn("token");
     }

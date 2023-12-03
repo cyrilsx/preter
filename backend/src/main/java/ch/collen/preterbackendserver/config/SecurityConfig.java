@@ -1,5 +1,6 @@
 package ch.collen.preterbackendserver.config;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -9,13 +10,12 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@EnableConfigurationProperties(SecurityProperties.class)
 public class SecurityConfig {
 
     private static final long TOKEN_VALIDITY_IN_SECONDS = 3600;
 
     static final String TOKEN_PREFIX = "Bearer";
-    private static final String TOKEN_SECRET = "KrxaxUxzHv7*cGC%AhFga&NECh99aaLgThyH^Jax^Q4MCks%PF";
-
 
     @Bean
     public AuthenticationManager authenticationManager(JWTUtil jwtUtils) {
@@ -23,8 +23,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JWTUtil jwtUtils() {
-        return new JWTUtil(TOKEN_SECRET, TOKEN_VALIDITY_IN_SECONDS);
+    public JWTUtil jwtUtils(SecurityProperties securityProperties) {
+        return new JWTUtil(securityProperties.getTokenSecret(), TOKEN_VALIDITY_IN_SECONDS);
     }
 
     @Bean
@@ -33,8 +33,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public Pbkdf2PasswordEncoder pbkdf2PasswordEncoder() {
-        return new Pbkdf2PasswordEncoder(TOKEN_SECRET, 10000, 128, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA512);
+    public Pbkdf2PasswordEncoder pbkdf2PasswordEncoder(SecurityProperties securityProperties) {
+        return new Pbkdf2PasswordEncoder(securityProperties.getHashSecret(), 100, 128, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA512);
     }
 
     @Bean
@@ -43,6 +43,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager,
             ServerHttpSecurity http) {
         return http
+                .cors(ServerHttpSecurity.CorsSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
@@ -50,6 +51,7 @@ public class SecurityConfig {
                         .pathMatchers("/api/invitations").permitAll()
                         .pathMatchers("/api/invitations/**").permitAll()
                         .pathMatchers("/api/login").permitAll()
+                        .pathMatchers("/api/register").permitAll()
                         .pathMatchers("/api/**").authenticated()
                         .anyExchange().authenticated()
                 )

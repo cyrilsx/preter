@@ -1,6 +1,7 @@
 package ch.collen.preterbackendserver.web;
 
 import ch.collen.preterbackendserver.db.UserRepository;
+import ch.collen.preterbackendserver.db.mapper.UserMapper;
 import ch.collen.preterbackendserver.model.User;
 import ch.collen.preterbackendserver.web.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ class UserResourceIT {
 
     @BeforeEach
     void setUpData() {
-        BDDMockito.given(repository.findAllByShortUrl(ArgumentMatchers.anyString())).willReturn(Mono.just(USER));
+        BDDMockito.given(repository.findAllByShortUrl(ArgumentMatchers.anyString())).willReturn(Mono.just(UserMapper.fromDomain(USER)));
     }
 
     @Test

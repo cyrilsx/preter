@@ -2,6 +2,7 @@ package ch.collen.preterbackendserver.e2e;
 
 import ch.collen.preterbackendserver.config.JWTUtil;
 import ch.collen.preterbackendserver.db.UserRepository;
+import ch.collen.preterbackendserver.db.mapper.UserMapper;
 import ch.collen.preterbackendserver.model.User;
 import ch.collen.preterbackendserver.web.UserResource;
 import ch.collen.preterbackendserver.web.dto.UserDto;
@@ -56,7 +57,7 @@ class UserE2EIT {
     @BeforeEach
     void setUpData() {
         userRepository.deleteAll().block();
-        userRepository.save(USER).block();
+        userRepository.save(UserMapper.fromDomain(USER)).block();
         token = jwtUtil.generateToken(USER);
     }
 

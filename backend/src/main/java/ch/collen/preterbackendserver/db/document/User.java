@@ -13,9 +13,10 @@ public class User {
     private String username;
     private String password;
     private String email;
-
     private String shortUrl;
     private Set<Role> roles;
+
+    private String imageName;
 
     public User() {
     }
@@ -59,5 +60,14 @@ public class User {
 
     public void setShortUrl(String shortUrl) {
         this.shortUrl = shortUrl;
+    }
+
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

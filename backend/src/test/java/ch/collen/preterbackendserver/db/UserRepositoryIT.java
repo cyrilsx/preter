@@ -1,6 +1,7 @@
 package ch.collen.preterbackendserver.db;
 
 import ch.collen.preterbackendserver.PreterBackendServerApplication;
+import ch.collen.preterbackendserver.db.mapper.UserMapper;
 import ch.collen.preterbackendserver.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class UserRepositoryIT {
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
-        userRepository.save(USER).block();
+        userRepository.save(UserMapper.fromDomain(USER)).block();
     }
 
     @Test

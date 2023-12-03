@@ -1,0 +1,70 @@
+{
+  "profile": {
+    "name": "Cyril",
+    "initials": "CC",
+    "email": "cyril.collen99@gmail.com",
+    "images": {
+      "sm": "https://avatars.githubusercontent.com/u/309288?v=4",
+      "lg": "https://avatars.githubusercontent.com/u/309288?v=4"
+    }
+  },
+  "communities": [
+    {
+      "name": "Les hauts du Cossy",
+      "slug": "cyril-collen1",
+      "description": "La communauté des Hauts du Cossy",
+      "image": "./hdc-mm.png",
+      "flex": 3,
+      "members": [
+        {
+          "name": "Cyril Collen",
+          "initials": "CC",
+          "email": "cyril.collen99@gmail.com"
+        },
+        {
+          "name": "Anastasija Collen",
+          "initials": "AC",
+          "email": "cyril.collen99@gmail.com"
+        }
+      ]
+    },
+    {
+      "name": "Les hauts du Cossy",
+      "slug": "cyril-collen2",
+      "description": "La communauté des Hauts du Cossy",
+      "image": "./hdc-mm.png",
+      "flex": 3,
+      "members": [
+        {
+          "name": "Cyril Collen",
+          "initials": "CC",
+          "email": "cyril.collen99@gmail.com"
+        },
+        {
+          "name": "Anastasija Collen",
+          "initials": "AC",
+          "email": "cyril.collen99@gmail.com"
+        }
+      ]
+    },
+    {
+      "name": "Les hauts du Cossy",
+      "slug": "cyril-collen3",
+      "description": "La communauté des Hauts du Cossy",
+      "image": "./hdc-lm.png",
+      "flex": 6,
+      "members": [
+        {
+          "name": "Cyril Collen",
+          "initials": "CC",
+          "email": "cyril.collen99@gmail.com"
+        },
+        {
+          "name": "Anastasija Collen",
+          "initials": "AC",
+          "email": "cyril.collen99@gmail.com"
+        }
+      ]
+    }
+  ]
+}

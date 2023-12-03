@@ -3,8 +3,17 @@ package ch.collen.preterbackendserver.config;
 import ch.collen.preterbackendserver.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.cert.CertificateException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +23,17 @@ public class JWTUtil {
     private final long expirationTime;
 
     public JWTUtil(String secret, long expirationTime) {
-        this.secret = Jwts.SIG.HS512.key().build();
+        this.secret = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationTime = expirationTime;
+    }
+
+    public static SecretKey convertStringToSecretKeyto(String encodedKey) {
+        SecretKey key = Jwts.SIG.HS512.key().build();
+
+        System.out.printf(key.getEncoded().toString());
+
+        byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+        return new SecretKeySpec(decodedKey, 0, decodedKey.length, "HS512");
     }
 
     public Claims getAllClaimsFromToken(String token) {

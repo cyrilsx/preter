@@ -7,6 +7,8 @@ public class UserDto {
     private String id;
     private String email;
 
+    private String phoneNumber;
+
     private String username;
     private String shortUrl;
     private String image;
@@ -52,6 +54,13 @@ public class UserDto {
         this.image = image;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getPassword() {
         return password;

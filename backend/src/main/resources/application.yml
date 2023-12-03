@@ -1,6 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://api_user:api1234@localhost:27017/preter_dev_db
+#      uri: mongodb://mongoadmin:secret@localhost:27017/preter_dev_db
+      uri: mongodb://app_preter:app_pwd@localhost:27017/preter_dev_db
   main:
     allow-bean-definition-overriding: true
